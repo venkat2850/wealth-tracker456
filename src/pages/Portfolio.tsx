@@ -1,9 +1,32 @@
+import { useHoldings } from "@/hooks/useHoldings";
+import { useTransactions } from "@/hooks/useTransactions";
 import { sampleHoldings, sampleTransactions } from "@/data/sample-data";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Portfolio() {
+  const { holdings: dbHoldings, isLoading: loadingH } = useHoldings();
+  const { transactions: dbTransactions, isLoading: loadingT } = useTransactions();
+
+  // Use DB data if available, fall back to sample data
+  const holdings = dbHoldings.length > 0 ? dbHoldings.map(h => ({
+    ...h,
+    avgBuyPrice: Number(h.avg_buy_price),
+    currentPrice: Number(h.current_price),
+    change24h: Number(h.change_24h),
+    units: Number(h.units),
+  })) : sampleHoldings;
+
+  const transactions = dbTransactions.length > 0 ? dbTransactions.map(t => ({
+    id: t.id,
+    symbol: t.symbol,
+    type: t.type as any,
+    units: Number(t.units ?? 0),
+    price: Number(t.price),
+    date: t.date,
+  })) : sampleTransactions;
+
   return (
     <div className="space-y-6">
       <div>
@@ -18,11 +41,7 @@ export default function Portfolio() {
         </TabsList>
 
         <TabsContent value="holdings" className="mt-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="gradient-card rounded-xl border border-border overflow-hidden"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="gradient-card rounded-xl border border-border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -37,19 +56,14 @@ export default function Portfolio() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleHoldings.map((h) => {
+                  {holdings.map((h) => {
                     const value = h.units * h.currentPrice;
                     const cost = h.units * h.avgBuyPrice;
                     const pnl = value - cost;
-                    const pnlPct = ((pnl / cost) * 100).toFixed(1);
+                    const pnlPct = cost > 0 ? ((pnl / cost) * 100).toFixed(1) : "0.0";
                     return (
                       <tr key={h.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
-                        <td className="px-4 py-3">
-                          <div>
-                            <span className="font-mono font-semibold text-foreground">{h.symbol}</span>
-                            <p className="text-xs text-muted-foreground">{h.name}</p>
-                          </div>
-                        </td>
+                        <td className="px-4 py-3"><div><span className="font-mono font-semibold text-foreground">{h.symbol}</span><p className="text-xs text-muted-foreground">{h.name}</p></div></td>
                         <td className="px-4 py-3 text-right font-mono text-foreground">{h.units}</td>
                         <td className="px-4 py-3 text-right font-mono text-muted-foreground">${h.avgBuyPrice.toFixed(2)}</td>
                         <td className="px-4 py-3 text-right font-mono text-foreground">${h.currentPrice.toFixed(2)}</td>
@@ -73,11 +87,7 @@ export default function Portfolio() {
         </TabsContent>
 
         <TabsContent value="transactions" className="mt-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="gradient-card rounded-xl border border-border overflow-hidden"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="gradient-card rounded-xl border border-border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -90,7 +100,7 @@ export default function Portfolio() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleTransactions.map((t) => (
+                  {transactions.map((t) => (
                     <tr key={t.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
                       <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{t.date}</td>
                       <td className="px-4 py-3 font-mono font-semibold text-foreground">{t.symbol}</td>

@@ -14,7 +14,150 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      goals: {
+        Row: {
+          created_at: string
+          current_amount: number
+          id: string
+          monthly_contribution: number
+          name: string
+          target_amount: number
+          target_date: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_amount?: number
+          id?: string
+          monthly_contribution?: number
+          name: string
+          target_amount: number
+          target_date: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_amount?: number
+          id?: string
+          monthly_contribution?: number
+          name?: string
+          target_amount?: number
+          target_date?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      holdings: {
+        Row: {
+          avg_buy_price: number
+          change_24h: number
+          created_at: string
+          current_price: number
+          id: string
+          name: string
+          symbol: string
+          type: string
+          units: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avg_buy_price?: number
+          change_24h?: number
+          created_at?: string
+          current_price?: number
+          id?: string
+          name: string
+          symbol: string
+          type?: string
+          units?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avg_buy_price?: number
+          change_24h?: number
+          created_at?: string
+          current_price?: number
+          id?: string
+          name?: string
+          symbol?: string
+          type?: string
+          units?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          kyc_status: string
+          risk_profile: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          kyc_status?: string
+          risk_profile?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          kyc_status?: string
+          risk_profile?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          price: number
+          symbol: string
+          type: string
+          units: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          price: number
+          symbol: string
+          type: string
+          units?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          price?: number
+          symbol?: string
+          type?: string
+          units?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
