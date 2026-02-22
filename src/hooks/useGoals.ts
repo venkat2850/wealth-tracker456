@@ -44,6 +44,18 @@ export function useGoals() {
     onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 
+  const updateGoal = useMutation({
+    mutationFn: async ({ id, ...updates }: { id: string; name?: string; type?: string; target_amount?: number; current_amount?: number; monthly_contribution?: number; target_date?: string }) => {
+      const { error } = await supabase.from("goals").update(updates).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
+      toast({ title: "Goal updated" });
+    },
+    onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
+  });
+
   const deleteGoal = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("goals").delete().eq("id", id);
@@ -53,5 +65,5 @@ export function useGoals() {
     onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" }),
   });
 
-  return { goals: query.data ?? [], isLoading: query.isLoading, createGoal, deleteGoal };
+  return { goals: query.data ?? [], isLoading: query.isLoading, createGoal, updateGoal, deleteGoal };
 }
